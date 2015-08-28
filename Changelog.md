@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.1.0 - 2015-08-29 - Ben Kolera <ben.kolera@gmail.com>
+- Exporting AsOpaleyeError and HasOpaleyeEnv
+
 ## 0.2.0.0 - 2015-08-29 - Ben Kolera <ben.kolera@gmail.com>
 - s/Db/Opaleye/g
 

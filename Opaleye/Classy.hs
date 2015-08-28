@@ -5,10 +5,10 @@
 {-# LANGUAGE TemplateHaskell       #-}
 module Opaleye.Classy
   ( OpaleyeEnv(OpaleyeEnv,_opaleyeEnvConn)
-  , opaleyeEnvConn
+  , HasOpaleyeEnv(opaleyeEnvConn)
   , closeEnv
   , OpaleyeError(OpaleyeSqlError,OpaleyeQueryError,OpaleyeResultError)
-  , _OpaleyeSqlError, _OpaleyeQueryError, _OpaleyeResultError
+  , AsOpaleyeError(_OpaleyeSqlError, _OpaleyeQueryError, _OpaleyeResultError)
   , CanOpaleye
   , liftQueryFirst
   , liftQuery
