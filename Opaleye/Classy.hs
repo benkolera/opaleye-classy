@@ -4,18 +4,18 @@
 {-# LANGUAGE RankNTypes            #-}
 {-# LANGUAGE TemplateHaskell       #-}
 module Opaleye.Classy
-  ( DbEnv(DbEnv,_dbEnvConn)
-  , dbEnvConn
-  , DbError(DbSqlError,DbQueryError,DbResultError)
-  , _DbSqlError, _DbQueryError, _DbResultError
-  , CanDb
+  ( OpaleyeEnv(OpaleyeEnv,_opaleyeEnvConn)
+  , opaleyeEnvConn
+  , closeEnv
+  , OpaleyeError(OpaleyeSqlError,OpaleyeQueryError,OpaleyeResultError)
+  , _OpaleyeSqlError, _OpaleyeQueryError, _OpaleyeResultError
+  , CanOpaleye
   , liftQueryFirst
   , liftQuery
   , liftInsert
   , liftInsertReturning
   , liftDelete
   , liftUpdate
-  , closeEnv
   , derivePGField
   ) where
 
@@ -34,28 +34,28 @@ import Opaleye
   , runInsertReturning, runQuery, runUpdate
   )
 
-data DbEnv = DbEnv
-  { _dbEnvConn :: Connection }
-makeClassy ''DbEnv
+data OpaleyeEnv = OpaleyeEnv
+  { _opaleyeEnvConn :: Connection }
+makeClassy ''OpaleyeEnv
 
-data DbError
-  = DbSqlError SqlError
-  | DbQueryError QueryError
-  | DbResultError ResultError
+data OpaleyeError
+  = OpaleyeSqlError SqlError
+  | OpaleyeQueryError QueryError
+  | OpaleyeResultError ResultError
   deriving Show
-makeClassyPrisms ''DbError
+makeClassyPrisms ''OpaleyeError
 
-type CanDb m c e =
+type CanOpaleye m c e =
   ( MonadReader c m
   , MonadError e m
   , MonadIO m
   , Applicative m
-  , AsDbError e
-  , HasDbEnv c
+  , AsOpaleyeError e
+  , HasOpaleyeEnv c
   )
 
 liftQueryFirst
-  :: ( CanDb m c e
+  :: ( CanOpaleye m c e
     , Default QueryRunner a b
     , Applicative m
     )
@@ -64,7 +64,7 @@ liftQueryFirst
 liftQueryFirst = fmap (^? _head) . liftQuery
 
 liftQuery
-  :: ( CanDb m c e
+  :: ( CanOpaleye m c e
     , Default QueryRunner a b
     )
   => Query a
@@ -72,14 +72,14 @@ liftQuery
 liftQuery q = withConn (`runQuery` q)
 
 liftInsert
-  :: CanDb m c e
+  :: CanOpaleye m c e
   => Table colW colR
   -> colW
   -> m Int64
 liftInsert t w = withConn $ \conn -> runInsert conn t w
 
 liftInsertReturning
-  :: ( CanDb m c e
+  :: ( CanOpaleye m c e
     , Default QueryRunner ret hask
     , Default Unpackspec ret ret
     )
@@ -90,7 +90,7 @@ liftInsertReturning
 liftInsertReturning t f c = withConn $ \conn -> runInsertReturning conn t c f
 
 liftUpdate
-  :: CanDb m c e
+  :: CanOpaleye m c e
   => Table colW colR
   -> (colR -> colW)
   -> (colR -> Column PGBool)
@@ -98,20 +98,20 @@ liftUpdate
 liftUpdate t u p = withConn $ \conn -> runUpdate conn t u p
 
 liftDelete
-  :: CanDb m c e
+  :: CanOpaleye m c e
   => Table colW colR
   -> (colR -> Column PGBool)
   -> m Int64
 liftDelete t p = withConn $ \conn -> runDelete conn t p
 
-withConn :: CanDb m c e => (Connection -> IO a) -> m a
-withConn f = view dbEnvConn >>= flip withGivenConn f
+withConn :: CanOpaleye m c e => (Connection -> IO a) -> m a
+withConn f = view opaleyeEnvConn >>= flip withGivenConn f
 
-withGivenConn :: CanDb m c e => Connection -> (Connection -> IO a) -> m a
+withGivenConn :: CanOpaleye m c e => Connection -> (Connection -> IO a) -> m a
 withGivenConn c f = liftIO $ f c
 
-closeEnv :: DbEnv -> IO ()
-closeEnv = close . (^.dbEnvConn)
+closeEnv :: OpaleyeEnv -> IO ()
+closeEnv = close . (^.opaleyeEnvConn)
 
 derivePGField
   :: forall a b. FromField a
