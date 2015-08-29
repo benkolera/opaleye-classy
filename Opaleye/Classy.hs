@@ -45,17 +45,21 @@ data OpaleyeError
   deriving Show
 makeClassyPrisms ''OpaleyeError
 
-type CanOpaleye m c e =
+type CanOpaleye c e m =
   ( MonadReader c m
   , MonadError e m
   , MonadIO m
-  , Applicative m
+  -- This applicative constraint doesn't actually need to be here,
+  -- but it makes the constraint easier to deal with in base < 4.8
+  -- I'm personally stuck on GHC 7.8 until we can upgrade to
+  -- Centos 7, so this is very helpful for me. :)
+  , Applicative m    
   , AsOpaleyeError e
   , HasOpaleyeEnv c
   )
 
 liftQueryFirst
-  :: ( CanOpaleye m c e
+  :: ( CanOpaleye c e m
     , Default QueryRunner a b
     , Applicative m
     )
@@ -64,7 +68,7 @@ liftQueryFirst
 liftQueryFirst = fmap (^? _head) . liftQuery
 
 liftQuery
-  :: ( CanOpaleye m c e
+  :: ( CanOpaleye c e m
     , Default QueryRunner a b
     )
   => Query a
@@ -72,14 +76,14 @@ liftQuery
 liftQuery q = withConn (`runQuery` q)
 
 liftInsert
-  :: CanOpaleye m c e
+  :: CanOpaleye c e m
   => Table colW colR
   -> colW
   -> m Int64
 liftInsert t w = withConn $ \conn -> runInsert conn t w
 
 liftInsertReturning
-  :: ( CanOpaleye m c e
+  :: ( CanOpaleye c e m
     , Default QueryRunner ret hask
     , Default Unpackspec ret ret
     )
@@ -90,7 +94,7 @@ liftInsertReturning
 liftInsertReturning t f c = withConn $ \conn -> runInsertReturning conn t c f
 
 liftUpdate
-  :: CanOpaleye m c e
+  :: CanOpaleye c e m
   => Table colW colR
   -> (colR -> colW)
   -> (colR -> Column PGBool)
@@ -98,16 +102,16 @@ liftUpdate
 liftUpdate t u p = withConn $ \conn -> runUpdate conn t u p
 
 liftDelete
-  :: CanOpaleye m c e
+  :: CanOpaleye c e m
   => Table colW colR
   -> (colR -> Column PGBool)
   -> m Int64
 liftDelete t p = withConn $ \conn -> runDelete conn t p
 
-withConn :: CanOpaleye m c e => (Connection -> IO a) -> m a
+withConn :: CanOpaleye c e m => (Connection -> IO a) -> m a
 withConn f = view opaleyeEnvConn >>= flip withGivenConn f
 
-withGivenConn :: CanOpaleye m c e => Connection -> (Connection -> IO a) -> m a
+withGivenConn :: CanOpaleye c e m => Connection -> (Connection -> IO a) -> m a
 withGivenConn c f = liftIO $ f c
 
 closeEnv :: OpaleyeEnv -> IO ()

@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.3.0.0 - 2015-08-30 - Ben Kolera <ben.kolera@gmail.com>
+- Reordered CanOpaleye params to CanOpaleye c e m rather than m c e
+
 ## 0.2.1.0 - 2015-08-29 - Ben Kolera <ben.kolera@gmail.com>
 - Exporting AsOpaleyeError and HasOpaleyeEnv
 
