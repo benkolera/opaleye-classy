@@ -12,6 +12,7 @@ description:
     <http://talks.bfpg.org/talks/2015-06-09.next_level_mtl.html>
     .   
     Note: This API may not be complete. If you need other functions exported then let me know or drop in a PR.
+    Also Note: This is only useful if you only have one DB in your transformer stack. :)
 license:             MIT
 license-file:        LICENSE
 author:              Ben Kolera
