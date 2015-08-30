@@ -9,5 +9,5 @@ http://talks.bfpg.org/talks/2015-06-09.next_level_mtl.html
 ## Warnings
 
   - This will only work if you only talk to one DB in your transformer stack. 
-  - This API is missing a few IO operations from [[http://hackage.haskell.org/package/opaleye-0.4.0.0/docs/Opaleye-Manipulation.html]].If you need other functions exported then let me know or drop in a PR.
+  - This API is missing a few IO operations from http://hackage.haskell.org/package/opaleye-0.4.0.0/docs/Opaleye-Manipulation.html.If you need other functions exported then let me know or drop in a PR.
 
