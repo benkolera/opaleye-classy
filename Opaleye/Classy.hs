@@ -5,10 +5,10 @@
 {-# LANGUAGE TemplateHaskell       #-}
 module Opaleye.Classy
   ( OpaleyeEnv(OpaleyeEnv,_opaleyeEnvConn)
-  , HasOpaleyeEnv(opaleyeEnvConn)
+  , HasOpaleyeEnv(opaleyeEnv,opaleyeEnvConn)
   , closeEnv
   , OpaleyeError(OpaleyeSqlError,OpaleyeQueryError,OpaleyeResultError)
-  , AsOpaleyeError(_OpaleyeSqlError, _OpaleyeQueryError, _OpaleyeResultError)
+  , AsOpaleyeError(_OpaleyeError,_OpaleyeSqlError, _OpaleyeQueryError, _OpaleyeResultError)
   , CanOpaleye
   , liftQueryFirst
   , liftQuery
@@ -53,7 +53,7 @@ type CanOpaleye c e m =
   -- but it makes the constraint easier to deal with in base < 4.8
   -- I'm personally stuck on GHC 7.8 until we can upgrade to
   -- Centos 7, so this is very helpful for me. :)
-  , Applicative m    
+  , Applicative m
   , AsOpaleyeError e
   , HasOpaleyeEnv c
   )
