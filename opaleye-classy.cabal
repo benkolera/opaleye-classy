@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                opaleye-classy
-version:             0.3.1.0
+version:             0.4.0.0
 synopsis:            Opaleye wrapped up in classy MTL attire.
 description:         
     Classy MTL extension of the lovely Opaleye library, which simply just wraps things up in a MonadReader , MonadError context where the config & error are constrained by Classy Lenses & Prisms rather than by concrete types
