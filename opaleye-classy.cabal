@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                opaleye-classy
-version:             0.3.1.0
+version:             0.3.1.1
 synopsis:            Opaleye wrapped up in classy MTL attire.
 description:         
     Classy MTL extension of the lovely Opaleye library, which simply just wraps things up in a MonadReader , MonadError context where the config & error are constrained by Classy Lenses & Prisms rather than by concrete types
@@ -12,6 +12,7 @@ description:
     <http://talks.bfpg.org/talks/2015-06-09.next_level_mtl.html>
     .   
     Note: This API may not be complete. If you need other functions exported then let me know or drop in a PR.
+    Also Note: This is only useful if you only have one DB in your transformer stack. :)
 license:             MIT
 license-file:        LICENSE
 author:              Ben Kolera
